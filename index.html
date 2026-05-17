@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cipolla Algoritmus</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>Cipolla Algoritmus</h1>
+
+      <p class="subtitle">Az <em>x</em>² ≡ <em>a</em> (mod <em>p</em>) egyenlet megoldása <em>x</em>-re</p>
+    </header>
+
+    <section class="inputs">
+      <div class="input-group">
+        <label for="input-p">p (Páratlan Prím)</label>
+
+        <input type="number" id="input-p" placeholder="pl.: 10007" />
+      </div>
+
+      <div class="input-group">
+        <label for="input-a">a (Kvadratikus Maradék)</label>
+
+        <input type="number" id="input-a" placeholder="pl.: 5" />
+      </div>
+
+      <button id="btn-compute">Kiszámítás</button>
+    </section>
+
+    <div class="cards" id="cards" hidden>
+      <div class="card" id="card-1">
+        <div class="card-header">
+          <span class="step-badge">01</span>
+
+          <h2>A <em>p</em> és <em>a</em> értékek ellenőrzése</h2>
+        </div>
+
+        <div class="card-body" id="card-1-body"></div>
+      </div>
+
+      <div class="card" id="card-2">
+        <div class="card-header">
+          <span class="step-badge">02</span>
+
+          <h2>A <em>t</em> érték meghatározása</h2>
+        </div>
+
+        <div class="card-body" id="card-2-body"></div>
+      </div>
+
+      <div class="card" id="card-3">
+        <div class="card-header">
+          <span class="step-badge">03</span>
+
+          <h2>A hatványozás &#120125;<sub>p²</sub>-ben</h2>
+        </div>
+
+        <div class="card-body" id="card-3-body"></div>
+      </div>
+
+      <div class="card result-card" id="card-4">
+        <div class="card-header">
+          <span class="step-badge">04</span>
+
+          <h2>Az eredmény ellenőrzése</h2>
+        </div>
+
+        <div class="card-body" id="card-4-body"></div>
+      </div>
+    </div>
+
+    <div id="error-msg" class="error-msg" hidden></div>
+  </div>
+</body>
+</html>
