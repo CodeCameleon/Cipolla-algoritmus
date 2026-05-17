@@ -327,6 +327,7 @@ header h1 {
   color: var(--danger);
   font-weight: 600;
   margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 /* ── Utility ── */

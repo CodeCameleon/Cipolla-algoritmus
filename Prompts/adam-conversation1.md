@@ -1,5 +1,6 @@
 # Cipolla Algoritmus – Fejlesztési Beszélgetés
 
+**AI:** Claude Sonnet 4.6  
 **Dátum:** 2026-05-17
 
 ---
