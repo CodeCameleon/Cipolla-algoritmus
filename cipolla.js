@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 // ── Kifejezés-értelmező (pl.: 2^61 − 1) ──────────────────────────────────
 
