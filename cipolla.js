@@ -111,6 +111,36 @@ function eulerCriterion(a, p) {
   return modPow(a, (p - 1n) / 2n, p);
 }
 
+// -- Random keresés --
+
+/**
+ * A nem kvadratikus maradék random keresésének függvénye
+ * @param {Number | BigInt} a - a szám amiből négyzetgyököt szeretnénk vonni
+ * @param {Number | BigInt} p - a prím modulus
+ * @returns {BigInt} a szám amire (t^2 - a)^(p - 1)/2 nem kvadratikus maradék (mod p)
+ */
+function randomSearch(a, p) {
+  a = BigInt(a);
+  p = BigInt(p);
+  let alreadyTried = new Array();
+
+  while (true) {
+    let t = BigInt(Math.floor(Math.random() * Number(p)));
+    while (alreadyTried.includes(t)) {
+      t = BigInt(Math.floor(Math.random() * Number(p)));
+    }
+    alreadyTried.push(t);
+
+    let base = ((t * t - a) + p) % p
+    if (eulerCriterion(base, p) === p - 1n) {
+      renderCard2("t végső értéke:", t, false);
+      return t;
+    }
+
+    renderCard2("t jelenlegi értéke:", t, true);
+  }
+}
+
 // ── DOM segédfüggvények ────────────────────────────────────────────────────
 
 function infoRow(label, value) {
@@ -164,6 +194,16 @@ function renderCard1(p, aMod, isPrime, legendreVal) {
     `a<sup>(p&#8722;1)/2</sup> mod p`,
     `${aMod}<sup>${exp}</sup> ≡ ${legendreVal} (mod ${p}) ${legendreLabel}`
   ));
+}
+
+// 02. kártya renderelése
+
+function renderCard2(msg, a, isQuadraticResidue) {
+    const body = document.getElementById('card-2-body');
+    let residueLabel = !isQuadraticResidue 
+      ? pill('(t<sup>2</sup> - a)<sup>(p-1)/2</sup> nem kvadratikus maradék (mod p) ✓', 'success')
+      : pill('(t<sup>2</sup> - a)<sup>(p-1)/2</sup> kvadratikus maradék (mod p) ✗', 'danger');
+    body.appendChild(infoRow(msg, `${a} ${residueLabel}`));
 }
 
 // ── Fő számítás ────────────────────────────────────────────────────────────
@@ -222,7 +262,13 @@ function compute() {
     return;
   }
 
-  // TODO: 02–04. kártyák (következő lépések)
+  // 02. kártya
+
+  randomSearch(a, p);
+
+  // TODO: 03–04. kártyák (következő lépések)
+
+
 }
 
 document.getElementById('btn-compute').addEventListener('click', compute);
