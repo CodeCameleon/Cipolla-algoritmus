@@ -134,7 +134,7 @@ function randomSearch(a, p) {
     let base = ((t * t - a) + p) % p
     if (eulerCriterion(base, p) === p - 1n) {
       renderCard2("t végső értéke:", t, false);
-      return a;
+      return t;
     }
 
     renderCard2("t jelenlegi értéke:", t, true);
