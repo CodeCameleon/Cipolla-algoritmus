@@ -141,6 +141,46 @@ function randomSearch(a, p) {
   }
 }
 
+// -- Polinom szorzás (u0 + u1√t) * (v0 + v1√t) mod (x^2 - (t^2 - a)) --
+
+function polMul([u0, u1], [v0, v1], t, a, p, exponent = null) {
+  const u0v0 = modMul(u0, v0, p);
+  const u0v1 = modMul(u0, v1, p);
+  const u1v0 = modMul(u1, v0, p);
+  const u1v1 = modMul(u1, v1, p);
+
+  const tMinusA = mod(t * t - a, p);
+  const newU0BeforeMod = u0v0 + modMul(u1v1, tMinusA, p);
+  const newU0 = mod(newU0BeforeMod, p);
+  const newU1BeforeMod = u0v1 + u1v0;
+  const newU1 = mod(newU1BeforeMod, p);
+  
+  if(exponent !== null) {
+    renderCard3(`Polinom szorzás eredménye (exponens: ${exponent}):`, u0, u1, newU0BeforeMod, newU1BeforeMod, newU0, newU1, p);
+  }
+
+  return [newU0, newU1];
+}
+
+// Bitműveletek
+
+function reverseBits(value, width) {
+  let v = value;
+  let out = 0n;
+  for (let i = 0n; i < BigInt(width); i++) {
+    out = (out << 1n) | (v & 1n);
+    v >>= 1n;
+  }
+  return out;
+}
+
+function bitLength(value) {
+  let v = value;
+  let len = 0;
+  while (v > 0n) { v >>= 1n; len++; }
+  return len;
+}
+
 // ── DOM segédfüggvények ────────────────────────────────────────────────────
 
 function infoRow(label, value) {
@@ -206,6 +246,13 @@ function renderCard2(msg, a, isQuadraticResidue) {
     body.appendChild(infoRow(msg, `${a} ${residueLabel}`));
 }
 
+// 03. kártya renderelése
+
+function renderCard3(msg, u0, u1, newU0BeforeMod, newU1BeforeMod, newU0, newU1, p) {
+    const body = document.getElementById('card-3-body');
+    body.appendChild(infoRow(msg, `Hatványozás előtt: (${u0}, ${u1}), után: (${newU0BeforeMod}, ${newU1BeforeMod}), redukálva: (${newU0}, ${newU1})`));
+}
+
 // ── Fő számítás ────────────────────────────────────────────────────────────
 
 function compute() {
@@ -264,11 +311,34 @@ function compute() {
 
   // 02. kártya
 
-  randomSearch(a, p);
+  a = aMod; // továbbiakban csak a mod p értékével dolgozunk
+  const t = randomSearch(a, p);
 
-  // TODO: 03–04. kártyák (következő lépések)
+  // 03. kártya
 
+  let weights = [t, 1n];
+  let exponent = (p + 1n) / 2n;
+  let b = [1n, 0n];
+  let targetExponent = exponent;
+  let actualExponent = 0n;
 
+  while (exponent > 0n) {
+    if (exponent % 2n === 1n) {
+      actualExponent += 1n;
+      const width = bitLength(actualExponent);
+      const flippedExponent = reverseBits(actualExponent, width);
+      console.log(`Exponent: ${exponent}, actualExponent: ${actualExponent}, flippedExponent: ${flippedExponent}`);
+      b = polMul(b, weights, t, a, p, flippedExponent);//targetExponent - exponent + 1n
+    }
+    weights = polMul(weights, weights, t, a, p);
+    exponent >>= 1n; // exponent = exponent // 2n
+    actualExponent <<= 1n; // actualExponent = actualExponent * 2n - ???
+  }
+
+  // 04. kártya
+  const xsqmodp = modPow(b[0], 2n, p);
+  console.log(`x^2 mod p = ${xsqmodp}, a mod p = ${a}`);
+  renderCard4(`Végső eredmények:`, b[0], xsqmodp);
 }
 
 document.getElementById('btn-compute').addEventListener('click', compute);
