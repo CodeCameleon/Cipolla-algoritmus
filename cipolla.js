@@ -253,15 +253,26 @@ function renderCard3(msg, u0, u1, newU0BeforeMod, newU1BeforeMod, newU0, newU1, 
     body.appendChild(infoRow(msg, `Hatványozás előtt: (${u0}, ${u1}), után: (${newU0BeforeMod}, ${newU1BeforeMod}), redukálva: (${newU0}, ${newU1})`));
 }
 
+function renderCard4(label, res, xsqmodp, a) {
+    const body = document.getElementById('card-4-body');
+    const isCorrect = xsqmodp === a;
+    const correctnessLabel = isCorrect
+      ? pill('Egyezik a-val ✓', 'success')
+      : pill('Nem egyezik a-val ✗', 'danger');
+    body.appendChild(infoRow(label, `${xsqmodp} ${correctnessLabel}`));
+}
+
 // ── Fő számítás ────────────────────────────────────────────────────────────
 
 function compute() {
   const pRaw = document.getElementById('input-p').value.trim();
   const aRaw = document.getElementById('input-a').value.trim();
   const errorEl = document.getElementById('error-msg');
+  const successEl = document.getElementById('success-msg');
   const cardsEl = document.getElementById('cards');
 
   errorEl.hidden = true;
+  successEl.hidden = true;
   cardsEl.hidden = true;
   ['card-1-body', 'card-2-body', 'card-3-body', 'card-4-body']
     .forEach(id => { document.getElementById(id).innerHTML = ''; });
@@ -338,7 +349,11 @@ function compute() {
   // 04. kártya
   const xsqmodp = modPow(b[0], 2n, p);
   console.log(`x^2 mod p = ${xsqmodp}, a mod p = ${a}`);
-  renderCard4(`Végső eredmények:`, b[0], xsqmodp);
+  renderCard4(`x<sup>2</sup> mod p:`, b[0], xsqmodp, a);
+  if(xsqmodp === a) {
+    successEl.innerHTML = `Siker! x<sub>1</sub> = ${b[0]} és x<sub>2</sub> = ${p-b[0]} megoldásai az egyenletnek.`;
+    successEl.hidden = false;
+  }
 }
 
 document.getElementById('btn-compute').addEventListener('click', compute);
