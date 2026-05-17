@@ -111,7 +111,7 @@ function eulerCriterion(a, p) {
   return modPow(a, (p - 1n) / 2n, p);
 }
 
-// -- Random keresés --
+// ── Random keresés ────────────────────────────────────────────────────────
 
 /**
  * A nem kvadratikus maradék random keresésének függvénye
@@ -141,7 +141,7 @@ function randomSearch(a, p) {
   }
 }
 
-// -- Polinom szorzás (u0 + u1√t) * (v0 + v1√t) mod (x^2 - (t^2 - a)) --
+// ── Polinom szorzás (u0 + u1√t) * (v0 + v1√t) mod (x^2 - (t^2 - a)) ─────
 
 function polMul([u0, u1], [v0, v1], t, a, p, exponent = null) {
   const u0v0 = modMul(u0, v0, p);
@@ -162,7 +162,7 @@ function polMul([u0, u1], [v0, v1], t, a, p, exponent = null) {
   return [newU0, newU1];
 }
 
-// Bitműveletek
+// ── Bitműveletek ──────────────────────────────────────────────────────────────
 
 function reverseBits(value, width) {
   let v = value;
@@ -236,7 +236,7 @@ function renderCard1(p, aMod, isPrime, legendreVal) {
   ));
 }
 
-// 02. kártya renderelése
+// ── 02. kártya renderelése ─────────────────────────────────────────────────
 
 function renderCard2(msg, a, isQuadraticResidue) {
     const body = document.getElementById('card-2-body');
@@ -246,11 +246,22 @@ function renderCard2(msg, a, isQuadraticResidue) {
     body.appendChild(infoRow(msg, `${a} ${residueLabel}`));
 }
 
-// 03. kártya renderelése
+// ── 03. kártya renderelése ─────────────────────────────────────────────────
 
 function renderCard3(msg, u0, u1, newU0BeforeMod, newU1BeforeMod, newU0, newU1, p) {
     const body = document.getElementById('card-3-body');
     body.appendChild(infoRow(msg, `Hatványozás előtt: (${u0}, ${u1}), után: (${newU0BeforeMod}, ${newU1BeforeMod}), redukálva: (${newU0}, ${newU1})`));
+}
+
+// ── 04. kártya renderelése ─────────────────────────────────────────────────
+
+function renderCard4(label, res, xsqmodp, a) {
+    const body = document.getElementById('card-4-body');
+    const isCorrect = xsqmodp === a;
+    const correctnessLabel = isCorrect
+      ? pill('Egyezik a-val ✓', 'success')
+      : pill('Nem egyezik a-val ✗', 'danger');
+    body.appendChild(infoRow(label, `${xsqmodp} ${correctnessLabel}`));
 }
 
 // ── Fő számítás ────────────────────────────────────────────────────────────
@@ -259,9 +270,11 @@ function compute() {
   const pRaw = document.getElementById('input-p').value.trim();
   const aRaw = document.getElementById('input-a').value.trim();
   const errorEl = document.getElementById('error-msg');
+  const successEl = document.getElementById('success-msg');
   const cardsEl = document.getElementById('cards');
 
   errorEl.hidden = true;
+  successEl.hidden = true;
   cardsEl.hidden = true;
   ['card-1-body', 'card-2-body', 'card-3-body', 'card-4-body']
     .forEach(id => { document.getElementById(id).innerHTML = ''; });
@@ -287,6 +300,8 @@ function compute() {
     errorEl.hidden = false;
     return;
   }
+
+  // 01. kártya
 
   const isPrime    = millerRabin(p);
   const aMod       = mod(a, p);
@@ -328,17 +343,21 @@ function compute() {
       const width = bitLength(actualExponent);
       const flippedExponent = reverseBits(actualExponent, width);
       console.log(`Exponent: ${exponent}, actualExponent: ${actualExponent}, flippedExponent: ${flippedExponent}`);
-      b = polMul(b, weights, t, a, p, flippedExponent);//targetExponent - exponent + 1n
+      b = polMul(b, weights, t, a, p, flippedExponent);
     }
     weights = polMul(weights, weights, t, a, p);
     exponent >>= 1n; // exponent = exponent // 2n
-    actualExponent <<= 1n; // actualExponent = actualExponent * 2n - ???
+    actualExponent <<= 1n;
   }
 
   // 04. kártya
   const xsqmodp = modPow(b[0], 2n, p);
   console.log(`x^2 mod p = ${xsqmodp}, a mod p = ${a}`);
-  renderCard4(`Végső eredmények:`, b[0], xsqmodp);
+  renderCard4(`x<sup>2</sup> mod p:`, b[0], xsqmodp, a);
+  if(xsqmodp === a) {
+    successEl.innerHTML = `Siker! x<sub>1</sub> = ${b[0]} és x<sub>2</sub> = ${p-b[0]} megoldásai az egyenletnek.`;
+    successEl.hidden = false;
+  }
 }
 
 document.getElementById('btn-compute').addEventListener('click', compute);
