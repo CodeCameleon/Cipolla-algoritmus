@@ -1,4 +1,59 @@
-'use strict';
+﻿'use strict';
+
+// ── Kifejezés-értelmező (pl.: 2^61 − 1) ──────────────────────────────────
+
+function parseExpr(str) {
+  str = str.replace(/\u2212/g, '-').replace(/\s+/g, '');
+  let pos = 0;
+
+  const peek = () => str[pos];
+  const consume = () => str[pos++];
+
+  function parseAddSub() {
+    let left = parseMulDiv();
+    while (peek() === '+' || peek() === '-') {
+      const op = consume();
+      left = op === '+' ? left + parseMulDiv() : left - parseMulDiv();
+    }
+    return left;
+  }
+
+  function parseMulDiv() {
+    let left = parsePow();
+    while (peek() === '*') { consume(); left *= parsePow(); }
+    return left;
+  }
+
+  function parsePow() {
+    const base = parseUnary();
+    if (peek() !== '^') return base;
+    consume();
+    return base ** parsePow();
+  }
+
+  function parseUnary() {
+    if (peek() === '-') { consume(); return -parseAtom(); }
+    return parseAtom();
+  }
+
+  function parseAtom() {
+    if (peek() === '(') {
+      consume();
+      const val = parseAddSub();
+      if (peek() !== ')') throw new Error('Hiányzó zárójel');
+      consume();
+      return val;
+    }
+    let num = '';
+    while (pos < str.length && str[pos] >= '0' && str[pos] <= '9') num += str[pos++];
+    if (!num) throw new Error(`Váratlan karakter: ${peek() ?? 'EOF'}`);
+    return BigInt(num);
+  }
+
+  const result = parseAddSub();
+  if (pos !== str.length) throw new Error(`Váratlan karakter: ${peek()}`);
+  return result;
+}
 
 // ── Moduláris aritmetika (BigInt) ──────────────────────────────────────────
 
@@ -132,10 +187,10 @@ function compute() {
 
   let p, a;
   try {
-    p = BigInt(pRaw);
-    a = BigInt(aRaw);
+    p = parseExpr(pRaw);
+    a = parseExpr(aRaw);
   } catch {
-    errorEl.textContent = 'Érvénytelen bemenet, csak egész számokat adjon meg!';
+    errorEl.textContent = 'Érvénytelen kifejezés! Használhat számokat, ^, *, +, \u2212 és zárójeleket.';
     errorEl.hidden = false;
     return;
   }
