@@ -239,29 +239,29 @@ function renderCard1(p, aMod, isPrime, legendreVal) {
 // ── 02. kártya renderelése ─────────────────────────────────────────────────
 
 function renderCard2(msg, a, isQuadraticResidue) {
-    const body = document.getElementById('card-2-body');
-    let residueLabel = !isQuadraticResidue 
-      ? pill('(t<sup>2</sup> - a)<sup>(p-1)/2</sup> nem kvadratikus maradék (mod p) ✓', 'success')
-      : pill('(t<sup>2</sup> - a)<sup>(p-1)/2</sup> kvadratikus maradék (mod p) ✗', 'danger');
-    body.appendChild(infoRow(msg, `${a} ${residueLabel}`));
+  const body = document.getElementById('card-2-body');
+  let residueLabel = !isQuadraticResidue 
+    ? pill('(t<sup>2</sup> - a)<sup>(p-1)/2</sup> nem kvadratikus maradék (mod p) ✓', 'success')
+    : pill('(t<sup>2</sup> - a)<sup>(p-1)/2</sup> kvadratikus maradék (mod p) ✗', 'danger');
+  body.appendChild(infoRow(msg, `${a} ${residueLabel}`));
 }
 
 // ── 03. kártya renderelése ─────────────────────────────────────────────────
 
 function renderCard3(msg, u0, u1, newU0BeforeMod, newU1BeforeMod, newU0, newU1, p) {
-    const body = document.getElementById('card-3-body');
-    body.appendChild(infoRow(msg, `Hatványozás előtt: (${u0}, ${u1}), után: (${newU0BeforeMod}, ${newU1BeforeMod}), redukálva: (${newU0}, ${newU1})`));
+  const body = document.getElementById('card-3-body');
+  body.appendChild(infoRow(msg, `Hatványozás előtt: (${u0}, ${u1}), után: (${newU0BeforeMod}, ${newU1BeforeMod}), redukálva: (${newU0}, ${newU1})`));
 }
 
 // ── 04. kártya renderelése ─────────────────────────────────────────────────
 
 function renderCard4(label, res, xsqmodp, a) {
-    const body = document.getElementById('card-4-body');
-    const isCorrect = xsqmodp === a;
-    const correctnessLabel = isCorrect
-      ? pill('Egyezik a-val ✓', 'success')
-      : pill('Nem egyezik a-val ✗', 'danger');
-    body.appendChild(infoRow(label, `${xsqmodp} ${correctnessLabel}`));
+  const body = document.getElementById('card-4-body');
+  const isCorrect = xsqmodp === a;
+  const correctnessLabel = isCorrect
+    ? pill('Egyezik a-val ✓', 'success')
+    : pill('Nem egyezik a-val ✗', 'danger');
+  body.appendChild(infoRow(label, `${xsqmodp} ${correctnessLabel}`));
 }
 
 // ── Fő számítás ────────────────────────────────────────────────────────────
