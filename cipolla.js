@@ -342,7 +342,6 @@ function compute() {
       actualExponent += 1n;
       const width = bitLength(actualExponent);
       const flippedExponent = reverseBits(actualExponent, width);
-      console.log(`Exponent: ${exponent}, actualExponent: ${actualExponent}, flippedExponent: ${flippedExponent}`);
       b = polMul(b, weights, t, a, p, flippedExponent);
     }
     weights = polMul(weights, weights, t, a, p);
@@ -352,7 +351,6 @@ function compute() {
 
   // 04. kártya
   const xsqmodp = modPow(b[0], 2n, p);
-  console.log(`x^2 mod p = ${xsqmodp}, a mod p = ${a}`);
   renderCard4(`x<sup>2</sup> mod p:`, b[0], xsqmodp, a);
   if(xsqmodp === a) {
     successEl.innerHTML = `Siker! x<sub>1</sub> = ${b[0]} és x<sub>2</sub> = ${p-b[0]} megoldásai az egyenletnek.`;
